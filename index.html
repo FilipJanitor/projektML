@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Vizualizacia neuronov</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <style>
+  #wrap {
+    position:relative;
+    margin: 10px;
+  }
+  .elem {
+    display: inline-block;
+    width: 20px; 
+    text-align: center;
+    font-family: Courier, monospace;
+  }
+  #main{
+    margin: 10px;
+  }
+  </style>
+  <script>
+  function colorize(neuronAct) {
+    if(neuronAct > 0) {
+      var h = 225;
+    } else {
+      var h = 0;
+    }
+    //lightness (50,100), no excitation is white - lightness 100
+    var l = (Math.floor((1 - Math.abs(neuronAct)) * 50) + 50);
+    var s = "hsl(" + h + ",60%," + l + "%)";
+    return s;
+  }
+
+  function render(div) {
+    div.empty();
+    payload = gdata[gdi];
+    for(var i=0;i<payload.poem.length;i++) {
+      var letter = payload.poem[i];
+      var activation = payload.neurons[i][gni];
+      activation = Math.tanh(activation); //-1,1
+      var color = colorize(activation);
+      var css = "background-color:" + color;
+      if(letter == " ") {
+        letter = "$"; // will be invisible anyway
+        css += ";color:" + color; //makes character the same color as the background
+      }
+      if(letter == "\n") {
+        css += ";display:block;" //the activation is not visible...
+      }
+      var newd = $("<div></div>");
+      newd.attr("class", "elem").attr("style", css).text(letter);
+      div.append(newd);
+    }
+  }
+  gni = 0;
+  gdi = 0;
+  function start() {
+    // data = {data:[{poem,neurons}...],neurons}
+    $.getJSON("out/data.json", function(data) {
+      gdata = data.data;
+      gneurons = data.neurons;
+      render($("#main"));
+    });
+  }
+  function change(val) {
+    switch (val){
+      case 0:
+        gni = (gni + 1)%gneurons;
+        break;
+      case 1:
+        gni = (gni == 0)?(gneurons-1): (gni -1)
+        break;
+      case 2:
+        gdi = (gdi + 1)%gdata.length;
+        break;
+      case 3:
+        gdi = (gdi == 0)?(gdata.length-1):(gdi -1);
+        break;
+    }
+    render($("#main"));
+  }
+  </script>
+  </head>
+  <body onload="start();">
+    <div id="wrap">
+      <button onclick="change(0)" style="width:100px; height:50px;">Next neuron</button>
+      <button onclick="change(1)" style="width:100px; height:50px;">Previous neuron</button>
+      <button onclick="change(2)" style="width:100px; height:50px;">Next poem</button>
+      <button onclick="change(3)" style="width:100px; height:50px;">Previous poem</button>
+    </div>
+    <div id="main"></div>
+  </body>
+</html>
