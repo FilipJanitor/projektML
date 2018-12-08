@@ -141,7 +141,7 @@ def slabikar(text): #normalny string
     break
   return data
 
-moj = ""
-with open("subor.txt","r") as cf:
-  moj = cf.read()
-print(len(slabikar(moj)))
+#moj = ""
+#with open("subor.txt","r") as cf:
+#  moj = cf.read()
+#print(len(slabikar(moj)))
