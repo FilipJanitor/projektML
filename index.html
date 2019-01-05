@@ -11,12 +11,16 @@
   }
   .elem {
     display: inline-block;
-    width: 20px; 
     text-align: center;
     font-family: Courier, monospace;
   }
   #main{
     margin: 10px;
+  }
+  .container {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
   }
   </style>
   <script>
@@ -41,11 +45,16 @@
       activation = Math.tanh(activation); //-1,1
       var color = colorize(activation);
       var css = "background-color:" + color;
-      if(letter == " ") {
+      if(!gfixed && gmode === "s"){
+        css += ";width:"+(11*letter.length) + "px";
+      } else {
+        css += ";width:"+gwidth + "px";
+      }
+      if(letter === " ") {
         letter = "$"; // will be invisible anyway
         css += ";color:" + color; //makes character the same color as the background
       }
-      if(letter == "\n") {
+      if(letter === "\n") {
         css += ";display:block;" //the activation is not visible...
       }
       var newd = $("<div></div>");
@@ -55,40 +64,123 @@
   }
   gni = 0;
   gdi = 0;
-  function start() {
+  gwidth = 20;
+  gfixed = true;
+  gmode = "c"
+  function start() {  
+    $("#act").hide();
     // data = {data:[{poem,neurons}...],neurons}
-    $.getJSON("out/data.json", function(data) {
-      gdata = data.data;
-      gneurons = data.neurons;
+    $.getJSON("out/dataS.json", function(data) {
+      sdata = data.data;
+      sneurons = data.neurons;  
+    });
+    $.getJSON("out/dataC.json", function(data) {
+      cdata = data.data;
+      cneurons = data.neurons;
+      gdata = cdata;
+      gneurons = cneurons;
+      for(i=1;i<=data.neurons;i++){
+        $("#selN").append('<option value="' + (i-1) + '">' + i + "</option>");
+      }
       render($("#main"));
     });
   }
-  function change(val) {
+  function change(val,number) {
     switch (val){
       case 0:
         gni = (gni + 1)%gneurons;
+        $("#selN").val(gni)
         break;
       case 1:
-        gni = (gni == 0)?(gneurons-1): (gni -1)
+        gni = (gni === 0)?(gneurons-1): (gni -1)
         break;
       case 2:
         gdi = (gdi + 1)%gdata.length;
         break;
       case 3:
-        gdi = (gdi == 0)?(gdata.length-1):(gdi -1);
+        gdi = (gdi === 0)?(gdata.length-1):(gdi -1);
+        break;
+      case 4:
+        gni = parseInt(number)%gneurons;//just in case
         break;
     }
+    render($("#main"));
+  }
+  
+  function report(what) {
+    if(what === 0){
+      $("#rep").show();
+      $("#act").hide();
+    } else {
+      $("#rep").hide();
+      $("#act").show();
+    }
+  }
+  
+  function changeNeuron() {
+    change(4, $("#selN").val());
+  }
+  
+  function changeModel() {
+    if($("#selM").val() === "c"){
+      gmode = "c"
+      gwidth = 20;
+      gdata = cdata;
+      gneurons = cneurons;
+      gdi = 0;
+      gni = 0;
+      $("#selN").empty();
+      for(i=1;i<=gneurons;i++){
+        $("#selN").append('<option value"' + (i-1) + '">' + i + "</option>");
+      }
+    }
+    else{
+      gmode = "s"
+      gwidth = 60;
+      gdata = sdata;
+      gneurons = sneurons;
+      gdi = 0;
+      gni = 0;
+      $("#selN").empty();
+      for(i=1;i<=gneurons;i++){
+        $("#selN").append('<option value"' + (i-1) + '">' + i + "</option>");
+      }
+    } 
+    render($("#main"));      
+  }
+  
+  function toggleFixedWidth() {
+    gfixed = !gfixed;
     render($("#main"));
   }
   </script>
   </head>
   <body onload="start();">
-    <div id="wrap">
-      <button onclick="change(0)" style="width:100px; height:50px;">Next neuron</button>
-      <button onclick="change(1)" style="width:100px; height:50px;">Previous neuron</button>
-      <button onclick="change(2)" style="width:100px; height:50px;">Next poem</button>
-      <button onclick="change(3)" style="width:100px; height:50px;">Previous poem</button>
+    <div id="head">
+      <button onclick="report(0)" style="width:100px; height:50px;">Show report</button>
+      <button onclick="report(1)" style="width:100px; height:50px;">Show poems</button>
     </div>
-    <div id="main"></div>
+    
+    <div id="rep" class="container">
+      <section>
+      
+      <section>
+    </div>
+    
+    <div id="act" class="container">
+      <div id="wrap">
+        <select id="selN" onchange="changeNeuron()">
+        </select>
+        <select id="selM" onchange="changeModel()">
+          <option value="c" selected="selected">Character model</option>
+          <option value="s">Syllable model</option>
+        </select>
+        <button onclick="change(0)" style="width:100px; height:50px;">Next neuron</button>
+        <button onclick="change(1)" style="width:100px; height:50px;">Previous neuron</button>
+        <button onclick="change(2)" style="width:100px; height:50px;">Next poem</button>
+        <button onclick="change(3)" style="width:100px; height:50px;">Previous poem</button>
+        <button onclick="toggleFixedWidth()" style="width:150px; height:50px;">Toggle fixed width</button>
+      </div>
+      <div id="main"></div>
   </body>
 </html>
