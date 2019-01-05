@@ -55,7 +55,9 @@
         css += ";color:" + color; //makes character the same color as the background
       }
       if(letter === "\n") {
-        css += ";display:block;" //the activation is not visible...
+        css += ";display:block;" 
+        letter = "$"; // activation for newline is important
+        css += ";color:" + color;
       }
       var newd = $("<div></div>");
       newd.attr("class", "elem").attr("style", css).text(letter);
@@ -89,10 +91,11 @@
     switch (val){
       case 0:
         gni = (gni + 1)%gneurons;
-        $("#selN").val(gni)
+        $("#selN").val((gni+1).toString())
         break;
       case 1:
         gni = (gni === 0)?(gneurons-1): (gni -1)
+        $("#selN").val((gni+1).toString())
         break;
       case 2:
         gdi = (gdi + 1)%gdata.length;
@@ -175,8 +178,8 @@
           <option value="c" selected="selected">Character model</option>
           <option value="s">Syllable model</option>
         </select>
-        <button onclick="change(0)" style="width:100px; height:50px;">Next neuron</button>
-        <button onclick="change(1)" style="width:100px; height:50px;">Previous neuron</button>
+        <!--<button onclick="change(0)" style="width:100px; height:50px;">Next neuron</button>
+        <button onclick="change(1)" style="width:100px; height:50px;">Previous neuron</button>-->
         <button onclick="change(2)" style="width:100px; height:50px;">Next poem</button>
         <button onclick="change(3)" style="width:100px; height:50px;">Previous poem</button>
         <button onclick="toggleFixedWidth()" style="width:150px; height:50px;">Toggle fixed width</button>
