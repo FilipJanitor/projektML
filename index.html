@@ -39,6 +39,7 @@
   function render(div) {
     div.empty();
     payload = gdata[gdi];
+    $("#desc").text(payload.desc);
     for(var i=0;i<payload.poem.length;i++) {
       var letter = payload.poem[i];
       var activation = payload.neurons[i][gni];
@@ -267,6 +268,7 @@
         <button onclick="change(2)" style="width:100px; height:50px;">Next poem</button>
         <button onclick="change(3)" style="width:100px; height:50px;">Previous poem</button>
         <button onclick="toggleFixedWidth()" style="width:150px; height:50px;">Toggle fixed width</button>
+        <span id="desc"> </span>
       </div>
       <div id="main"></div>
   </body>
