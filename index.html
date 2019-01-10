@@ -167,91 +167,364 @@
     
     <div id="rep" class="container" style="padding:1% 30% 1% 15%;">
       <section class="markdown-body" >
-      <h1 id="umeldante">Umelý Dante</h1>
 
-      <h3 id="filipjanitor">Filip Janitor</h3>
+        <h1 id="umeldante">Umelý Dante</h1>
 
-      <p><a href="https://github.com/FilipJanitor/projektML">Repozitár projektu</a></p>
+        <h3 id="filipjanitor">Filip Janitor</h3>
 
-      <h2 id="abstrakt">Abstrakt</h2>
+        <p><a href="https://github.com/FilipJanitor/projektML">Repozitár projektu</a></p>
 
-      <p>Danteho Božská Komédia je mnohými považovaná za najvýznamnejšiu stredovekú báseň. V slovenčine v rokoch 1965, 1982 a 1986 postupne vyšli všetky tri časti tejto básne, prebásnené Viliamom Turčánym a Jozefom Felixom. Ich práca bola ocenená tak na národnej ako aj medzinárodnej úrovni. V našom projekte skúšame na tomto texte natrénovať rekurentnú neurónovú sieť, nájsť v nej zaujímavé neuróny a vygenerovať niekoľko nových spevov. Niektoré z nich začíname dvojverším od prekladateľa V. Turčányho:</p>
+        <h2 id="abstrakt">Abstrakt</h2>
 
-      <p><strong>Šťastní, čo z BOŽSKÉHO DIELA aj prvý diel veľspevu majú: <br /> aby sme čítaním Danteho PEKLA sa blížili k RAJU"</strong></p>
+        <p>Danteho Božská Komédia je považovaná za najvýznamnejšiu stredovekú báseň. V slovenčine v rokoch 1965, 1982 a 1986 postupne vyšli všetky tri časti tejto básne, prebásnené Viliamom Turčánym a Jozefom Felixom. Ich práca bola ocenená tak na národnej ako aj medzinárodnej úrovni. V našom projekte skúšame na tomto texte natrénovať rekurentnú neurónovú sieť, nájsť v nej zaujímavé neuróny a vygenerovať niekoľko nových spevov. Niektoré z nich začíname dvojverším od prekladateľa V. Turčányho:</p>
 
-      <h2 id="prca">Práca</h2>
+        <p><strong>Šťastní, čo z BOŽSKÉHO DIELA aj prvý diel veľspevu majú: <br /> aby sme čítaním Danteho PEKLA sa blížili k RAJU"</strong></p>
 
-      <p>Naša práca je založená na článku <a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The unreasonable effectiveness of recurrent neural networks</a>. Tento článok obsahoval aj implementáciu modelov, ktoré popisoval, no táto implmentácia bola v jazyku Lua a používala nástroj Torch. Aby sme sa lepšie zoznámili s použitými postupmi, rozhodli sme sa reimplementovať ich do jazyka Python a nástroja Keras a vyskúšať natrénovať modely na vstupe rozdelenom na znaky a na slabiky. </p>
+        <h2 id="prca">Práca</h2>
 
-      <h3 id="slabikr">Slabikár</h3>
+        <p>Naša práca je založená na článku <a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The unreasonable effectiveness of recurrent neural networks</a>. Tento článok obsahoval aj implementáciu modelov, ktoré popisoval, no táto implmentácia bola v jazyku Lua a používala nástroj Torch. Aby sme sa lepšie zoznámili s použitými postupmi, rozhodli sme sa reimplementovať ich do jazyka Python a nástroja Keras a vyskúšať natrénovať modely na vstupe rozdelenom na znaky a na slabiky. </p>
 
-      <p>Aby sme mohli model trénovať na slabikových vstupných dátach, implementovali sme nástroj, ktorý umožňuje automaticky deliť slovenský text na slabiky. Riadili sme sa <a href="http://www.juls.savba.sk/ediela/psp2000/psp.pdf">Pravidlami slovenského pravopisu</a> (V. Rozdeľovanie slov). Samotný nástroj interne používa automat s lookaheadom a možnosťou čítania určitých častí vstupu viackrát. V priebehu práce na projekte sme sa rozhodli odstrániť z trénovacích dát diakritiku, no slabikár sme implementovali s ohľadom na jej prítomnosť. Slabikár je však obmedzený na znaky, ktoré sa vyskytujú v texte Božskej komédie, a tak v prípade použitia neštandardnej interpunkcie či cudzojazyčných grafém nebude bez úprav fungovať. Taktiež, keďže delenie slov na slabiky je záležitosťou rytmu a teda zvukovej stránky jazyka, pravidlá, ktoré používa slabikár na rozdelenie postupností grafém nie vždy produkujú úplne správny výstup. Prípady, v ktorých sa mýli sú však pomerne ojedinelé a pre naše potreby je jeho výkon dostatočný. Ako príklad uvádzame niekoľko situácii, v korých sa slabikár mýli:</p>
+        <h3 id="slabikr">Slabikár</h3>
 
-<ul>
-<li>Hlásky <em>ch</em>, <em>dz</em> a <em>dž</em> sú tzv. zložky, zapisujú sa dvoma grafémami. Slabikár ich preto považuje za spoluhlásky a nedelí ich. Napriek tomu, niekedy sa na rozhraní morfém nachádzajú vedľa seba písmená <em>c</em> a <em>h</em> netvoriace hlásku <em>ch</em> ako je to v prípade slova <em>viachlasný</em>. Slabikár takéto použitie nedokáže rozlíšíť.</li>
+        <p>Aby sme mohli model trénovať na slabikových vstupných dátach, implementovali sme nástroj, ktorý umožňuje automaticky deliť slovenský text na slabiky. Riadili sme sa <a href="http://www.juls.savba.sk/ediela/psp2000/psp.pdf">Pravidlami slovenského pravopisu</a> (V. Rozdeľovanie slov). Samotný nástroj interne používa automat s lookaheadom a možnosťou čítania určitých častí vstupu viackrát. V priebehu práce na projekte sme sa rozhodli odstrániť z trénovacích dát diakritiku, no slabikár sme implementovali s ohľadom na jej prítomnosť. Slabikár je však obmedzený na znaky, ktoré sa vyskytujú v texte Božskej komédie, a tak v prípade použitia neštandardnej interpunkcie či cudzojazyčných grafém nebude bez úprav fungovať. Taktiež, keďže delenie slov na slabiky je záležitosťou rytmu a teda zvukovej stránky jazyka, pravidlá, ktoré používa slabikár na rozdelenie postupností grafém nie vždy produkujú úplne správny výstup. Prípady, v ktorých sa mýli sú však pomerne ojedinelé a pre naše potreby je jeho výkon dostatočný. Ako príklad uvádzame niekoľko situácii, v korých sa slabikár mýli:</p>
 
-<li>Dvojhlásky <em>ia</em>, <em>ie</em> a <em>iu</em> sú tzv. zložené samohlásky a preto ich slabikár nerozdeľuje. Existujú však slová, kde postupnosť týchto písmen nie je dvojhláskou, ale iba spojením dvoch samohlások. Príkladom je <em>Mária</em>.</li>
+        <ul>
+          <li>Hlásky <em>ch</em>, <em>dz</em> a <em>dž</em> sú tzv. zložky, zapisujú sa dvoma grafémami. Slabikár ich preto považuje za spoluhlásky a nedelí ich. Napriek tomu, niekedy sa na rozhraní morfém nachádzajú vedľa seba písmená <em>c</em> a <em>h</em> netvoriace hlásku <em>ch</em> ako je to v prípade slova <em>viachlasný</em>. Slabikár takéto použitie nedokáže rozlíšíť.</li>
 
-<li>Niektoré spojenia samohláskových písmen majú v niektorých slovách jednoslabičnú výslovnosť a preto sa nerozdeľujú. Slabikár k nim však pristupuje ako k dvom osobitným samohláskam, keďže nemá znalosť zvukovej stránky reči. Príkladom sú slová <em>auto</em> či <em>flauta</em> </li>
-</ul>
+          <li>Dvojhlásky <em>ia</em>, <em>ie</em> a <em>iu</em> sú tzv. zložené samohlásky a preto ich slabikár nerozdeľuje. Existujú však slová, kde postupnosť týchto písmen nie je dvojhláskou, ale iba spojením dvoch samohlások. Príkladom je <em>Mária</em>.</li>
 
-<h3 id="pozorovania">Pozorovania</h3>
+          <li>Niektoré spojenia samohláskových písmen majú v niektorých slovách jednoslabičnú výslovnosť a preto sa nerozdeľujú. Slabikár k nim však pristupuje ako k dvom osobitným samohláskam, keďže nemá znalosť zvukovej stránky reči. Príkladom sú slová <em>auto</em> či <em>flauta</em> </li>
+        </ul>
 
-<p>Mnohé reimplementácie pôvodnej myšlienky generovania textu používajú zjednodušený model oproti tomu, ktorý bol prezentovaný v pôvodnom článku. Pôvodný model fungoval v režime many-to-many. V tomto prípade to znamená, že jeho výstupom bola sekvencia rovnakej dĺžky ako tá, ktorú dostal na vstupe. Napríklad, pre vstup <em>Dante Alighier</em> by model vygeneroval výstup <em>ante Alighieri</em>. V režime trénovania je dĺžka vstupných sekvencií obmedzená na fixný počet niekoľko desiatok znakov, v prípade generovania už natrénovaným modelom je dĺžka vstupnej sekvencie prakticky neohraničená. Keďže výstup je akoby o jeden znak posunutý pohľad na text, keď na vstup ako časť sekvencie dostane model znak, ktorý v predchádzajúcom kole vygeneroval, výstupom je novovygenerovaný znak, ktorý opäť môžeme použiť ako vstup. Spomínané reimplementácie pracujú v režime many-to-one. To znamená, že pre vstupnú sekvenciu <em>Dante Alighier</em> dajú na výstup <em>i</em>. Naviac, dĺžka vstupnej sekvencie je obmedzená na rovnakú dĺžku ako pri tréningu. To je pre nás nevyhovujúce z nasledujúcich dôvodov:</p>
+        <h3 id="pozorovania">Pozorovania</h3>
 
-      <ul>
-      <li>Chceli sme pozorovať správanie neurónov pri čítaní celého vygenerovaného textu, čo je pri takomto nasekaní prakticky nerealizovateľné. </li>
+        <p>Mnohé reimplementácie pôvodnej myšlienky generovania textu používajú zjednodušený model oproti tomu, ktorý bol prezentovaný v pôvodnom článku. Pôvodný model fungoval v režime many-to-many. V tomto prípade to znamená, že jeho výstupom bola sekvencia rovnakej dĺžky ako tá, ktorú dostal na vstupe. Napríklad, pre vstup <em>Dante Alighier</em> by model vygeneroval výstup <em>ante Alighieri</em>. V režime trénovania je dĺžka vstupných sekvencií obmedzená na fixný počet niekoľko desiatok znakov, v prípade generovania už natrénovaným modelom je dĺžka vstupnej sekvencie prakticky neohraničená. Keďže výstup je akoby o jeden znak posunutý pohľad na text, keď na vstup ako časť sekvencie dostane model znak, ktorý v predchádzajúcom kole vygeneroval, výstupom je novovygenerovaný znak, ktorý opäť môžeme použiť ako vstup. Spomínané reimplementácie pracujú v režime many-to-one. To znamená, že pre vstupnú sekvenciu <em>Dante Alighier</em> dajú na výstup <em>i</em>. Naviac, dĺžka vstupnej sekvencie je obmedzená na rovnakú dĺžku ako pri tréningu. To je pre nás nevyhovujúce z nasledujúcich dôvodov:</p>
 
-      <li>Transformácia, ktorú robí takto zjednodušený model je principiálne taká istá, ako robí nerekurzívna neurónová sieť - vstup fixnej veľkosti transformuje na výstup fixnej veľkosti s pomocou fixného počtu výpočtových krokov. Aby mali rekurentné neurónové siete opodstatnenie v tejto aplikácii, potrebovali sme, aby pracovali na postupnostiach neohraničenej dĺžky.</li>
-      </ul>
+        <ul>
+          <li>Chceli sme pozorovať správanie neurónov pri čítaní celého vygenerovaného textu, čo je pri takomto nasekaní prakticky nerealizovateľné. </li>
 
-      <p>Domnievame sa, že hlavným dôvodom, prečo vývojári postupovali takto je určitá vlastnosť nástroja Keras a jeho implementácie rekurentných sietí s LSTM neurónmi. Keras umožňuje nastaviť modelu parameter <em>stateful</em>. Ak je tento parameter nastavený na <em>true</em>, keras uloží konečný stav siete pre každú sekvenciu v batchi. V nasledujúcom batchi potom podľa indexu sekvencie v rámci batchu obnoví stav siete na taký, v ktorom skončila sekvencia na tom istom indexe v predchádzajúcom batchi a tým akoby pokračuje v trénovaní na jednej sekvencii. Ak je parameter nastavený na <em>false</em>, každá jedna sekvencia sa považuje za nový vstup. Trénovanie modelov, ktoré majú tento parameter nastavený na <em>true</em> sa na základe množstva issues na projektovom repozitári s touto tematikou javí zložitejšie a taktiež pre generovanie textu zbytočné. Ak je však už model natrénovaný v <em>stateless</em> móde s fixnou dĺžkou vstupu, je jednoduchšie použiť ho priamo tak aj na generovanie, miesto toho, aby bol prerobený. Taktiež, redukcia výstupu na posledný znak miesto celej postupnosti sa nám javí ako snaha zjednodušiť a sprehľadniť program so zachovaním postačujúceho výkonu.</p>
+          <li>Transformácia, ktorú robí takto zjednodušený model je principiálne taká istá, ako robí nerekurzívna neurónová sieť - vstup fixnej veľkosti transformuje na výstup fixnej veľkosti s pomocou fixného počtu výpočtových krokov. Aby mali rekurentné neurónové siete opodstatnenie v tejto aplikácii, potrebovali sme, aby pracovali na postupnostiach neohraničenej dĺžky.</li>
+        </ul>
 
-      <p>TODO: stateful problemy</p>
+        <p>Domnievame sa, že hlavným dôvodom, prečo vývojári postupovali takto je určitá vlastnosť nástroja Keras a jeho implementácie rekurentných sietí s LSTM neurónmi. Keras umožňuje nastaviť modelu parameter <em>stateful</em>. Ak je tento parameter nastavený na <em>true</em>, keras uloží konečný stav siete pre každú sekvenciu v batchi. V nasledujúcom batchi potom podľa indexu sekvencie v rámci batchu obnoví stav siete na taký, v ktorom skončila sekvencia na tom istom indexe v predchádzajúcom batchi a tým akoby pokračuje v trénovaní na jednej sekvencii. Ak je parameter nastavený na <em>false</em>, každá jedna sekvencia sa považuje za nový vstup. Trénovanie modelov, ktoré majú tento parameter nastavený na <em>true</em> sa na základe množstva issues na repozitári Keras s touto tematikou javí zložitejšie a taktiež pre generovanie textu nepotrebné. Ak je však už model natrénovaný v <em>stateless</em> móde s fixnou dĺžkou vstupu, je jednoduchšie použiť ho priamo tak aj na generovanie, miesto toho, aby bol prerobený. Taktiež, redukcia výstupu na posledný znak miesto celej postupnosti sa nám javí ako snaha zjednodušiť a sprehľadniť program so zachovaním postačujúceho výkonu.</p>
 
-      <p>Počas práce na projekte sme prechádzali niekoľkými štádiami. Najskôr sme začali trénovať malé siete (dokopy do 300 neurónov rozdelených do maximálne 2 vrstiev) na vstupe rozdelenom na znaky bez odstránenia diakritiky. Z dôvodu pamäťových obmedzení sme na tréning nepoužívali všetky možné sekvencie, generovateľné zo vstupného textu, ale iba určitú časť. Napr z textu <em>abrakadabra</em> je možné získať týchto vstupných sekvencii dĺžky 5:</p>
+        <p>My sme po natrénovaní model prerábali, pričom sme sa pokúsili použiť dva rôzne prístupy generovania básní. Prvý bol snahou napodobniť pôvodný postup z článku. To znamená, použiť <em>stateful</em> model a vkladať vstup po jednom znaku. Žiaľ, sieť generovala zlý výstup (pravdepodobne sme tiež narazili na nejakú vlastnosť stateful modelu vo vzťahu k tvaru vstupu a nástroju na čítanie aktivácií o ktorej sme nevedeli) a navyše, kvôli zvolenej metodike čítania aktivácií jednotlivých neurónov bol tento postup veľmi pomalý. Druhý spôsob spočíval v použití <em>stateless</em> modelu, ktorý mal ale neobmedzenú dĺžku vstupu. V každom kole sme mu teda dávali na vstup prečítať celý doposiaľ vygenerovaný text. Model sa tak mal možnosť rozhodnúť na základe celého kontextu, nie len umelo obmedzeného na niekoľko znakov, tak ako to robili spomínané reimplementácie. Aktivácie jednotlivých neurónov sme zaznamenávali až pri poslednom prechode celého vygenerovaného textu. Je zjavné, že takýto prístup nie je elegantný a jeho časová náročnosť prudko stúpa s dĺžkou vygenerovaného textu. Pre naše potreby a nami zvolenú výstupnú dĺžku básní však bol čas generovania podobný ako pri <em>stateful</em> modeli.   </p>
 
-      <ul>
-      <li><em>abrak</em></li>
+        <p>Počas práce na projekte sme prechádzali niekoľkými štádiami. Najskôr sme začali trénovať malé siete (dokopy do 300 neurónov rozdelených do maximálne 2 vrstiev) na vstupe rozdelenom na znaky bez odstránenia diakritiky. Z dôvodu pamäťových obmedzení sme na tréning nepoužívali všetky možné sekvencie, generovateľné zo vstupného textu, ale iba určitú časť. Napr z textu <em>abrakadabra</em> je možné získať týchto vstupných sekvencii dĺžky 5:</p>
 
-      <li><em>braka</em></li>
+        <ul>
+          <li><em>abrak</em></li>
 
-      <li><em>rakad</em></li>
+          <li><em>braka</em></li>
 
-      <li><em>akada</em></li>
+          <li><em>rakad</em></li>
 
-      <li><em>kadab</em></li>
+          <li><em>akada</em></li>
 
-      <li><em>adabr</em></li>
-      </ul>
+          <li><em>kadab</em></li>
 
-      <p>My sme používali krok medzi sekvenciami väčší ako 1, teda napríklad pri kroku 3 by sme dostali na vstupe len sekvencie <em>abrak</em> a <em>akada</em>. Ukázalo sa, že ani odstránenie diakritiky nepomohlo, pretože vsupných dát bolo pre sieť jednoducho málo. Pri veľmi malých sieťach (do 150 neurónov) sme pozorovali underfit, pri väčších sieťach zas postupný overfit. Na rozdelení neurónov do vrstiev nezáležalo, <em>validation accuracy</em> nikdy neprekročila 50 percent. Rozhodli sme sa teda reimplementovať generátor vstupných dát. Poučení zo skúseností s tréningom modelu pracujúcom na znakoch sme paralelne s ním na inom počítači začali trénovať aj slabikový model priamo na vstupe s odstránenou diakritikou s krokmi veľkosti 1 a so sieťou podobných rozmerov ako v pôvodnom článku.</p>
+          <li><em>adabr</em></li>
+        </ul>
 
-      <p>Pri generovaní sme limitacia</p>
+        <p>My sme používali krok medzi sekvenciami väčší ako 1, teda napríklad pri kroku 3 by sme dostali na vstupe len sekvencie <em>abrak</em> a <em>akada</em>. Toto spôsobilo, že pre sieť nebolo dosť vstupných dát a ukázalo sa, že ani odstránenie diakritiky výkon siete na tak malom datasete nezlepší. Pri veľmi malých sieťach (do 150 neurónov) sme pozorovali underfit, pri väčších sieťach zas postupný overfit. Na rozdelení neurónov do vrstiev prakticky nezáležalo, <em>validation accuracy</em> nikdy neprekročila 50 percent. Rozhodli sme sa teda reimplementovať generátor vstupných dát. Poučení zo skúseností s tréningom modelu pracujúcom na znakoch sme paralelne s ním na inom počítači začali trénovať aj slabikový model priamo na vstupe s odstránenou diakritikou, s krokmi veľkosti 1 a so sieťou podobných rozmerov ako v pôvodnom článku.</p>
 
-      <p>Niektoré vygenerované básne spolu aktiváciami jednotlivých neurónov je možné preskúmať na tejto stránke. Je možné voliť neurón, ktorého sa zobrazujú, model, ktorého básne sa zobrazujú a tiež vyberať konkrétnu báseň. V nasledujúcich častiach uvádzame podrobnosti z trénovania a taktiež niektoré príklady zaujímavých neurónov.</p>
+        <p>Niektoré vygenerované básne spolu aktiváciami jednotlivých neurónov je možné preskúmať na tejto stránke. Je možné voliť neurón, ktorého aktivácie sa zobrazujú, model, ktorého básne sa zobrazujú a tiež vyberať konkrétnu báseň. V nasledujúcich častiach uvádzame podrobnosti z trénovania a taktiež niektoré príklady zaujímavých neurónov.</p>
 
-      <p>TODO: doplit tabulky</p>
+        <h4 id="psmenovmodel">Písmenový model</h4>
 
-      <h4 id="psmenovmodel">Písmenový model</h4>
+        <p>Po reimplementácii generátoru vstupných dát sme vyskúšali nasledovné siete:</p>
 
-      <ul>
-      <li>2 vrstvy, každá po 128 neurónov. Dropout 0,1. Po 50 epochách sa model ustálil s acc: 0,52 val_acc: 0,56 loss: 1,45 val_loss: 13</li>
+        <ul>
+          <li>2 vrstvy, každá po 128 neurónov. Dropout 0,1. Po 50 epochách sa model ustálil s acc: 0,52 val_acc: 0,56 loss: 1,45 val_loss: 13</li>
 
-      <li>2 vrstvy, každá po 200 neurónov. Dropout 0.1. Po 40 epochách sa model ustálil s acc: 0,61 val_acc: 0,69 loss: 1,19 val_loss: 0,96</li>
+          <li>2 vrstvy, každá po 200 neurónov. Dropout 0.1. Po 40 epochách sa model ustálil s acc: 0,61 val_acc: 0,69 loss: 1,19 val_loss: 0,96</li>
 
-      <li>2 vrstvy, každá po 300 neurónov. Dropout 0.1. Po 50 epochách sa model ustálil s acc: 0,75 val_acc: 0,85 loss: 0,75 val_loss: 0,48</li>
-      </ul>
-      
-      <p>Finálny model: 2 vrstvy, každá po 512 neurónov. Dropout 0,1</p>
+          <li>2 vrstvy, každá po 300 neurónov. Dropout 0.1. Po 50 epochách sa model ustálil s acc: 0,75 val_acc: 0,85 loss: 0,75 val_loss: 0,48</li>
+        </ul>
 
-      <h4 id="slabikovmodel">Slabikový model</h4>
+        <p>Finálny model: 2 vrstvy, každá po 512 neurónov. Dropout 0,1</p>
 
-      <p>Finálny model: 2 vrstvy, každá po 512 neurónov. Dropout 0,1</p>
+        <p>Pozorovali sme, že zvyšovaním teploty sa model púšťa do experimentovania s dĺžkou strof či slovotvorbou. Výsledné básne teda v sebe obsahujú prvok dadaizmu. Pri nízkych teplotách model priamo recituje dlhšie úseky z pôvodného textu. Domnievame sa, že malá veľkosť vstupných dát a krátkosť trénovacej sekvencie spôsobila, že model sa nedokázal úplne naučiť pravidlá priamej reči ani správne dĺžky spevov. </p>
 
-      <h2 id="zvery">Závery</h2>
+        <h5 id="zaujmavneurny">Zaujímavé neuróny</h5>
 
-      <p>TODO: závery</p>
+        <p>Vzhľadom k tomu, že text básne nie je až tak štruktúrovaný, nepredpokladali sme, že bude možné identifikovať veľké množstvo špecializovaných neurónov, ako napríklad v prípade modelu generujúceho zdrojový kód v jazyku C. Očakávali sme, že nájdeme neuróny na identifikovanie nadpisov spevov, priamej reči, dĺžku veršu a dĺžku strofy. Okrem neurónov na priamu reč sa v modeli tie ostatné skutočne nachádzali. Výber niektorých:</p>
+
+        <ul>
+          <li>475 553 774 881 945- pozícia v  riadku</li>
+          
+          <li>679 - rytmus versa</li>
+
+          <li>942 - spev</li>
+
+          <li>524 555 582 608 755 862- slová</li>
+
+          <li>245 280 733- špec znaky, konce riadkov</li>
+        </ul>
+
+        <h4 id="slabikovmodel">Slabikový model</h4>
+
+        <p>Finálny model: 2 vrstvy, každá po 512 neurónov. Dropout 0,1</p>
+
+        <p>Rovnako ako pri písmenovom modeli, pozorujeme, že model má problém s organizáciou spevov a priamou rečou. Dĺžka trénovacej sekvencie nastavená na 120 bola pravdepodobne nedostatočná na naučenie sa týchto veľkých štruktúr. Na druhej strane, zdá sa, že aspoň v prípade krátkej priamej reči si model osvojil celkom dobrú schopnosť písať ju korektne a zmysluplne.  </p>
+
+        <h5 id="zaujmavneurny-1">Zaujímavé neuróny</h5>
+
+        <p>Pozorovania sa zhodujú s písmenovým modelom. Za zmienku stoja neuróny:</p>
+        <ul>
+          <li>11 - medzery a oddelenia</li>
+
+        </ul>
+
+        <h2 id="zvery">Závery</h2>
+
+        <p>Na texte Danteho Božskej komédie sa nám podarilo natrénovať rekurentnú neurónovú sieť pracujúcu na písmenách a slabikách a to aj napriek tomu, že rozsah pôvodného diela pre takéto modely je pomerne malý. Podarilo sa nám nájsť vhodné hyperparametre a vytvoriť niekoľko nových básní, ktoré svojou kvalitou môžu konkurovať mnohým dielam súčasnej avantgardnej poézie. Ukázalo sa, že napriek tomu, že slabikový model bol výpočtovo náročnejší, medzi jeho výstupom a výstupom písmenového modelu neboli veľké rozdiely. </p>
+
+        <h4 id="zznamztrnovaniapsmenovhomodelu">Záznam z trénovania písmenového modelu:</h4>
+
+        <p>Trénované na Intel i5-2430m</p>
+
+        <pre><code>Epoch 1/40
+9462/9462 [==============================] - 29279s 3s/step - loss: 1.0256 - acc: 0.6771 - val_loss: 0.3317 - val_acc: 0.9070
+
+Epoch 00001: val_acc improved from -inf to 0.90697, saving model to checkpoints/weights512n3l60o1step-01-0.91-0.33.hdf5
+Epoch 2/40
+9462/9462 [==============================] - 29385s 3s/step - loss: 0.4445 - acc: 0.8590 - val_loss: 0.2540 - val_acc: 0.9251
+
+Epoch 00002: val_acc improved from 0.90697 to 0.92515, saving model to checkpoints/weights512n3l60o1step-02-0.93-0.25.hdf5
+Epoch 3/40
+9462/9462 [==============================] - 29438s 3s/step - loss: 0.3784 - acc: 0.8802 - val_loss: 0.2318 - val_acc: 0.9302
+
+Epoch 00003: val_acc improved from 0.92515 to 0.93022, saving model to checkpoints/weights512n3l60o1step-03-0.93-0.23.hdf5
+Epoch 4/40
+9462/9462 [==============================] - 29319s 3s/step - loss: 0.3461 - acc: 0.8903 - val_loss: 0.2191 - val_acc: 0.9331
+
+Epoch 00004: val_acc improved from 0.93022 to 0.93313, saving model to checkpoints/weights512n3l60o1step-04-0.93-0.22.hdf5
+Epoch 5/40
+9462/9462 [==============================] - 29478s 3s/step - loss: 0.3241 - acc: 0.8973 - val_loss: 0.2096 - val_acc: 0.9354
+
+Epoch 00005: val_acc improved from 0.93313 to 0.93536, saving model to checkpoints/weights512n3l60o1step-05-0.94-0.21.hdf5
+Epoch 6/40
+9462/9462 [==============================] - 29438s 3s/step - loss: 0.3085 - acc: 0.9022 - val_loss: 0.2028 - val_acc: 0.9371
+
+Epoch 00006: val_acc improved from 0.93536 to 0.93708, saving model to checkpoints/weights512n3l60o1step-06-0.94-0.20.hdf5
+Epoch 7/40
+9462/9462 [==============================] - 29322s 3s/step - loss: 0.2962 - acc: 0.9060 - val_loss: 0.1975 - val_acc: 0.9385
+
+Epoch 00007: val_acc improved from 0.93708 to 0.93848, saving model to checkpoints/weights512n3l60o1step-07-0.94-0.20.hdf5
+Epoch 8/40
+9462/9462 [==============================] - 29444s 3s/step - loss: 0.2859 - acc: 0.9093 - val_loss: 0.1936 - val_acc: 0.9394
+
+Epoch 00008: val_acc improved from 0.93848 to 0.93940, saving model to checkpoints/weights512n3l60o1step-08-0.94-0.19.hdf5
+Epoch 9/40
+9462/9462 [==============================] - 29451s 3s/step - loss: 0.2771 - acc: 0.9120 - val_loss: 0.1898 - val_acc: 0.9404
+
+Epoch 00009: val_acc improved from 0.93940 to 0.94040, saving model to checkpoints/weights512n3l60o1step-09-0.94-0.19.hdf5
+Epoch 10/40
+9462/9462 [==============================] - 29380s 3s/step - loss: 0.2696 - acc: 0.9143 - val_loss: 0.1874 - val_acc: 0.9409
+
+Epoch 00010: val_acc improved from 0.94040 to 0.94087, saving model to checkpoints/weights512n3l60o1step-10-0.94-0.19.hdf5
+Epoch 11/40
+9462/9462 [==============================] - 29477s 3s/step - loss: 0.2631 - acc: 0.9164 - val_loss: 0.1841 - val_acc: 0.9419
+
+Epoch 00011: val_acc improved from 0.94087 to 0.94192, saving model to checkpoints/weights512n3l60o1step-11-0.94-0.18.hdf5
+Epoch 12/40
+9462/9462 [==============================] - 29474s 3s/step - loss: 0.2573 - acc: 0.9181 - val_loss: 0.1819 - val_acc: 0.9424
+
+Epoch 00012: val_acc improved from 0.94192 to 0.94237, saving model to checkpoints/weights512n3l60o1step-12-0.94-0.18.hdf5
+Epoch 13/40
+9462/9462 [==============================] - 29418s 3s/step - loss: 0.2523 - acc: 0.9197 - val_loss: 0.1801 - val_acc: 0.9428
+
+Epoch 00013: val_acc improved from 0.94237 to 0.94284, saving model to checkpoints/weights512n3l60o1step-13-0.94-0.18.hdf5
+Epoch 14/40
+9462/9462 [==============================] - 29564s 3s/step - loss: 0.2476 - acc: 0.9211 - val_loss: 0.1779 - val_acc: 0.9434
+
+Epoch 00014: val_acc improved from 0.94284 to 0.94344, saving model to checkpoints/weights512n3l60o1step-14-0.94-0.18.hdf5
+Epoch 15/40
+9462/9462 [==============================] - 29527s 3s/step - loss: 0.2435 - acc: 0.9224 - val_loss: 0.1764 - val_acc: 0.9439
+
+Epoch 00015: val_acc improved from 0.94344 to 0.94385, saving model to checkpoints/weights512n3l60o1step-15-0.94-0.18.hdf5
+Epoch 16/40
+9462/9462 [==============================] - 29501s 3s/step - loss: 0.2396 - acc: 0.9236 - val_loss: 0.1749 - val_acc: 0.9443
+
+Epoch 00016: val_acc improved from 0.94385 to 0.94433, saving model to checkpoints/weights512n3l60o1step-16-0.94-0.17.hdf5
+Epoch 17/40
+9462/9462 [==============================] - 29614s 3s/step - loss: 0.2363 - acc: 0.9247 - val_loss: 0.1735 - val_acc: 0.9447
+
+Epoch 00017: val_acc improved from 0.94433 to 0.94467, saving model to checkpoints/weights512n3l60o1step-17-0.94-0.17.hdf5
+Epoch 18/40
+9462/9462 [==============================] - 29461s 3s/step - loss: 0.2331 - acc: 0.9257 - val_loss: 0.1722 - val_acc: 0.9450
+
+Epoch 00018: val_acc improved from 0.94467 to 0.94501, saving model to checkpoints/weights512n3l60o1step-18-0.95-0.17.hdf5
+Epoch 19/40
+9462/9462 [==============================] - 29550s 3s/step - loss: 0.2301 - acc: 0.9266 - val_loss: 0.1706 - val_acc: 0.9455
+
+Epoch 00019: val_acc improved from 0.94501 to 0.94545, saving model to checkpoints/weights512n3l60o1step-19-0.95-0.17.hdf5
+Epoch 20/40
+9462/9462 [==============================] - 29565s 3s/step - loss: 0.2275 - acc: 0.9274 - val_loss: 0.1697 - val_acc: 0.9458
+
+Epoch 00020: val_acc improved from 0.94545 to 0.94577, saving model to checkpoints/weights512n3l60o1step-20-0.95-0.17.hdf5
+Epoch 21/40
+9462/9462 [==============================] - 29582s 3s/step - loss: 0.2249 - acc: 0.9282 - val_loss: 0.1687 - val_acc: 0.9460
+
+Epoch 00021: val_acc improved from 0.94577 to 0.94597, saving model to checkpoints/weights512n3l60o1step-21-0.95-0.17.hdf5
+Epoch 22/40
+9462/9462 [==============================] - 29538s 3s/step - loss: 0.2226 - acc: 0.9289 - val_loss: 0.1677 - val_acc: 0.9463
+
+Epoch 00022: val_acc improved from 0.94597 to 0.94632, saving model to checkpoints/weights512n3l60o1step-22-0.95-0.17.hdf5
+Epoch 23/40
+9462/9462 [==============================] - 29628s 3s/step - loss: 0.2205 - acc: 0.9295 - val_loss: 0.1669 - val_acc: 0.9466
+
+Epoch 00023: val_acc improved from 0.94632 to 0.94658, saving model to checkpoints/weights512n3l60o1step-23-0.95-0.17.hdf5
+Epoch 24/40
+9462/9462 [==============================] - 29673s 3s/step - loss: 0.2184 - acc: 0.9302 - val_loss: 0.1660 - val_acc: 0.9468
+
+Epoch 00024: val_acc improved from 0.94658 to 0.94680, saving model to checkpoints/weights512n3l60o1step-24-0.95-0.17.hdf5
+Epoch 25/40
+9462/9462 [==============================] - 29674s 3s/step - loss: 0.2166 - acc: 0.9308 - val_loss: 0.1652 - val_acc: 0.9470
+
+Epoch 00025: val_acc improved from 0.94680 to 0.94704, saving model to checkpoints/weights512n3l60o1step-25-0.95-0.17.hdf5
+Epoch 26/40
+9462/9462 [==============================] - 29779s 3s/step - loss: 0.2146 - acc: 0.9314 - val_loss: 0.1645 - val_acc: 0.9473
+
+Epoch 00026: val_acc improved from 0.94704 to 0.94726, saving model to checkpoints/weights512n3l60o1step-26-0.95-0.16.hdf5
+Epoch 27/40
+9462/9462 [==============================] - 29780s 3s/step - loss: 0.2130 - acc: 0.9319 - val_loss: 0.1636 - val_acc: 0.9475
+
+Epoch 00027: val_acc improved from 0.94726 to 0.94754, saving model to checkpoints/weights512n3l60o1step-27-0.95-0.16.hdf5
+Epoch 28/40
+9462/9462 [==============================] - 29785s 3s/step - loss: 0.2114 - acc: 0.9324 - val_loss: 0.1632 - val_acc: 0.9476
+
+Epoch 00028: val_acc improved from 0.94754 to 0.94761, saving model to checkpoints/weights512n3l60o1step-28-0.95-0.16.hdf5
+Epoch 29/40
+9462/9462 [==============================] - 29842s 3s/step - loss: 0.2099 - acc: 0.9329 - val_loss: 0.1622 - val_acc: 0.9479
+
+Epoch 00029: val_acc improved from 0.94761 to 0.94790, saving model to checkpoints/weights512n3l60o1step-29-0.95-0.16.hdf5
+Epoch 30/40
+9462/9462 [==============================] - 29690s 3s/step - loss: 0.2084 - acc: 0.9333 - val_loss: 0.1615 - val_acc: 0.9482
+
+Epoch 00030: val_acc improved from 0.94790 to 0.94817, saving model to checkpoints/weights512n3l60o1step-30-0.95-0.16.hdf5
+Epoch 31/40
+9462/9462 [==============================] - 29622s 3s/step - loss: 0.2071 - acc: 0.9338 - val_loss: 0.1612 - val_acc: 0.9482
+
+Epoch 00031: val_acc improved from 0.94817 to 0.94820, saving model to checkpoints/weights512n3l60o1step-31-0.95-0.16.hdf5
+Epoch 32/40
+9462/9462 [==============================] - 29787s 3s/step - loss: 0.2058 - acc: 0.9341 - val_loss: 0.1605 - val_acc: 0.9484
+
+Epoch 00032: val_acc improved from 0.94820 to 0.94836, saving model to checkpoints/weights512n3l60o1step-32-0.95-0.16.hdf5
+Epoch 33/40
+9462/9462 [==============================] - 29584s 3s/step - loss: 0.2046 - acc: 0.9345 - val_loss: 0.1601 - val_acc: 0.9484
+
+Epoch 00033: val_acc improved from 0.94836 to 0.94844, saving model to checkpoints/weights512n3l60o1step-33-0.95-0.16.hdf5
+Epoch 34/40
+9462/9462 [==============================] - 30254s 3s/step - loss: 0.2034 - acc: 0.9349 - val_loss: 0.1595 - val_acc: 0.9487
+
+Epoch 00034: val_acc improved from 0.94844 to 0.94867, saving model to checkpoints/weights512n3l60o1step-34-0.95-0.16.hdf5
+Epoch 35/40
+9462/9462 [==============================] - 29807s 3s/step - loss: 0.2023 - acc: 0.9352 - val_loss: 0.1589 - val_acc: 0.9488
+
+Epoch 00035: val_acc improved from 0.94867 to 0.94884, saving model to checkpoints/weights512n3l60o1step-35-0.95-0.16.hdf5
+Epoch 36/40
+9462/9462 [==============================] - 29617s 3s/step - loss: 0.2012 - acc: 0.9356 - val_loss: 0.1585 - val_acc: 0.9490
+
+Epoch 00036: val_acc improved from 0.94884 to 0.94902, saving model to checkpoints/weights512n3l60o1step-36-0.95-0.16.hdf5
+Epoch 37/40
+9462/9462 [==============================] - 29881s 3s/step - loss: 0.2001 - acc: 0.9359 - val_loss: 0.1581 - val_acc: 0.9491
+
+Epoch 00037: val_acc improved from 0.94902 to 0.94911, saving model to checkpoints/weights512n3l60o1step-37-0.95-0.16.hdf5
+Epoch 38/40
+9462/9462 [==============================] - 30170s 3s/step - loss: 0.1990 - acc: 0.9362 - val_loss: 0.1576 - val_acc: 0.9493
+
+Epoch 00038: val_acc improved from 0.94911 to 0.94927, saving model to checkpoints/weights512n3l60o1step-38-0.95-0.16.hdf5
+Epoch 39/40
+9462/9462 [==============================] - 29582s 3s/step - loss: 0.1982 - acc: 0.9365 - val_loss: 0.1573 - val_acc: 0.9493
+
+Epoch 00039: val_acc improved from 0.94927 to 0.94932, saving model to checkpoints/weights512n3l60o1step-39-0.95-0.16.hdf5
+Epoch 40/40
+9462/9462 [==============================] - 29588s 3s/step - loss: 0.1973 - acc: 0.9368 - val_loss: 0.1567 - val_acc: 0.9496
+
+Epoch 00040: val_acc improved from 0.94932 to 0.94955, saving model to checkpoints/weights512n3l60o1step-40-0.95-0.16.hdf5
+        </code></pre>
+
+        <h4 id="zznamztrnovaniaslabikovhomodeluvypralasnosiesastihlaustli">Záznam z trénovania slabikového modelu (vypršal čas, no sieť sa stihla ustáliť):</h4>
+
+        <p>Trénované na Intel i7-2600</p>
+
+        <pre><code>Epoch 1/100
+14450/14450 [==============================] - 85806s 6s/step - loss: 2.8698 - acc: 0.4444 - val_loss: 2.0473 - val_acc: 0.5524
+
+Epoch 00001: val_acc improved from -inf to 0.55240, saving model to checkpoints/Fix-01-0.55-2.05.hdf5
+Epoch 2/100
+14450/14450 [==============================] - 115622s 8s/step - loss: 1.9063 - acc: 0.5725 - val_loss: 1.3205 - val_acc: 0.6976
+
+Epoch 00002: val_acc improved from 0.55240 to 0.69759, saving model to checkpoints/Fix-02-0.70-1.32.hdf5
+Epoch 3/100
+14450/14450 [==============================] - 139836s 10s/step - loss: 1.4577 - acc: 0.6515 - val_loss: 0.9047 - val_acc: 0.7936
+
+Epoch 00003: val_acc improved from 0.69759 to 0.79360, saving model to checkpoints/Fix-03-0.79-0.90.hdf5
+Epoch 4/100
+14450/14450 [==============================] - 111960s 8s/step - loss: 1.1926 - acc: 0.7025 - val_loss: 0.6692 - val_acc: 0.8512
+
+Epoch 00004: val_acc improved from 0.79360 to 0.85124, saving model to checkpoints/Fix-04-0.85-0.67.hdf5
+Epoch 5/100\n",
+14450/14450 [==============================] - 111203s 8s/step - loss: 1.0136 - acc: 0.7397 - val_loss: 0.5142 - val_acc: 0.8879
+
+Epoch 00005: val_acc improved from 0.85124 to 0.88794, saving model to checkpoints/Fix-05-0.89-0.51.hdf5
+Epoch 6/100
+14450/14450 [==============================] - 85644s 6s/step - loss: 0.8830 - acc: 0.7690 - val_loss: 0.4102 - val_acc: 0.9133
+
+Epoch 00006: val_acc improved from 0.88794 to 0.91330, saving model to checkpoints/Fix-06-0.91-0.41.hdf5
+Epoch 7/100
+14450/14450 [==============================] - 85159s 6s/step - loss: 0.7818 - acc: 0.7931 - val_loss: 0.3404 - val_acc: 0.9296
+
+Epoch 00007: val_acc improved from 0.91330 to 0.92960, saving model to checkpoints/Fix-07-0.93-0.34.hdf5
+Epoch 8/100
+14450/14450 [==============================] - 85353s 6s/step - loss: 0.7024 - acc: 0.8130 - val_loss: 0.2939 - val_acc: 0.9393
+
+Epoch 00008: val_acc improved from 0.92960 to 0.93928, saving model to checkpoints/Fix-08-0.94-0.29.hdf5
+Epoch 9/100
+14450/14450 [==============================] - 84769s 6s/step - loss: 0.6394 - acc: 0.8295 - val_loss: 0.2616 - val_acc: 0.9468
+
+Epoch 00009: val_acc improved from 0.93928 to 0.94677, saving model to checkpoints/Fix-09-0.95-0.26.hdf5
+Epoch 10/100
+14450/14450 [==============================] - 109820s 8s/step - loss: 0.5869 - acc: 0.8437 - val_loss: 0.2416 - val_acc: 0.9506
+
+Epoch 00010: val_acc improved from 0.94677 to 0.95060, saving model to checkpoints/Fix-10-0.95-0.24.hdf5
+Epoch 11/100
+14450/14450 [==============================] - 109397s 8s/step - loss: 0.5437 - acc: 0.8555 - val_loss: 0.2258 - val_acc: 0.9530
+
+Epoch 00011: val_acc improved from 0.95060 to 0.95300, saving model to checkpoints/Fix-11-0.95-0.23.hdf5
+Epoch 12/100
+14450/14450 [==============================] - 85323s 6s/step - loss: 0.5085 - acc: 0.8655 - val_loss: 0.2159 - val_acc: 0.9548
+
+Epoch 00012: val_acc improved from 0.95300 to 0.95479, saving model to checkpoints/Fix-12-0.95-0.22.hdf5
+Epoch 13/100
+14450/14450 [==============================] - 85742s 6s/step - loss: 0.4794 - acc: 0.8736 - val_loss: 0.2034 - val_acc: 0.9570
+
+Epoch 00013: val_acc improved from 0.95479 to 0.95704, saving model to checkpoints/Fix-13-0.96-0.20.hdf5
+Epoch 14/100
+14450/14450 [==============================] - 85443s 6s/step - loss: 0.4546 - acc: 0.8808 - val_loss: 0.2008 - val_acc: 0.9574
+
+Epoch 00014: val_acc improved from 0.95704 to 0.95735, saving model to checkpoints/Fix-14-0.96-0.20.hdf5
+Epoch 15/100
+14450/14450 [==============================] - 84859s 6s/step - loss: 0.4328 - acc: 0.8870 - val_loss: 0.1933 - val_acc: 0.9586
+
+Epoch 00015: val_acc improved from 0.95735 to 0.95862, saving model to checkpoints/Fix-15-0.96-0.19.hdf5
+Epoch 16/100
+14450/14450 [==============================] - 110515s 8s/step - loss: 0.4140 - acc: 0.8923 - val_loss: 0.1896 - val_acc: 0.9592
+
+Epoch 00016: val_acc improved from 0.95862 to 0.95920, saving model to checkpoints/Fix-16-0.96-0.19.hdf5
+Epoch 17/100
+14450/14450 [==============================] - 138638s 10s/step - loss: 0.3968 - acc: 0.8973 - val_loss: 0.1837 - val_acc: 0.9602
+
+Epoch 00017: val_acc improved from 0.95920 to 0.96025, saving model to checkpoints/Fix-17-0.96-0.18.hdf5
+Epoch 18/100
+14450/14450 [==============================] - 84968s 6s/step - loss: 0.3827 - acc: 0.9013 - val_loss: 0.1829 - val_acc: 0.9604
+
+Epoch 00018: val_acc improved from 0.96025 to 0.96038, saving model to checkpoints/Fix-18-0.96-0.18.hdf5
+Epoch 19/100
+2583/14450 [====&gt;.........................] - ETA: 18:56:04 - loss: 0.3748 - acc: 0.9035"
+</code></pre>
       <section>
     </div>
     

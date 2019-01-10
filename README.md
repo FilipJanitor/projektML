@@ -1,5 +1,7 @@
-## Projekt na predmet strojové učenie 2018
+## Projekt na predmet strojové učenie 2018 
 
-# Slabikár (slabikar.py)
+# Umelý Dante
 
-Obsahuje nástroj na rozdelenie slovenského textu na slabiky. Nepísmenkové znaky sú brané ako špeciálne slabiky. Nástroj si nevie poradiť s okrajovými prípadmi, ktoré sú spôsobené nešťastnými predponami/príponami, ktoré kolidujú s iným pravidlom. Napr. *ch* sa nedelí, ale v slove *viachlasný* je akurát na rozhraní dvoch morfém, a teda výsledné slabiky by mali byť *viac-hlas-ný*. Taktiež, nevie si poradiť s dvojicou samohlások, ktoré majú jednoslabičnú výslovnosť *au-to*. Tieto prípady sú však pomerne ojedinelé 
+Vzhľadom na veľkosť jednotlivých súborov a omedzenia bandwidthu pre git-lfs je potrebné stiahnuť si posledný release (tu)[https://github.com/FilipJanitor/projektML/releases] a pozerať si stránku `index.html`.
+
+Keďže dáta spojené s vizualizáciou sú väčšie, ako sa javascriptu zvykne páčiť, je potrebné prezerať si ich postupne a urobiťˇdrobné úpravy. Súbory v priečinku `out/` majú koncovky názvu tvaru `číslo` a znak `c` alebo `s`. Číslo označuje seed, ktorý bol použitý pri generovaní, znak zas, či sa jedná o básne písmenového alebo slabikového modelu. Stránka očakáva súbor `out/dataS.json` pre slabikový model a `out/dataC.json` pre písmenkový model. Pre používanie a prezeranie aktivácií je teda potrebné adekvátne si súbory premenovávať.
