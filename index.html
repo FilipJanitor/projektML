@@ -208,7 +208,7 @@
 
         <p>Domnievame sa, že hlavným dôvodom, prečo vývojári postupovali takto je určitá vlastnosť nástroja Keras a jeho implementácie rekurentných sietí s LSTM neurónmi. Keras umožňuje nastaviť modelu parameter <em>stateful</em>. Ak je tento parameter nastavený na <em>true</em>, keras uloží konečný stav siete pre každú sekvenciu v batchi. V nasledujúcom batchi potom podľa indexu sekvencie v rámci batchu obnoví stav siete na taký, v ktorom skončila sekvencia na tom istom indexe v predchádzajúcom batchi a tým akoby pokračuje v trénovaní na jednej sekvencii. Ak je parameter nastavený na <em>false</em>, každá jedna sekvencia sa považuje za nový vstup. Trénovanie modelov, ktoré majú tento parameter nastavený na <em>true</em> sa na základe množstva issues na repozitári Keras s touto tematikou javí zložitejšie a taktiež pre generovanie textu nepotrebné. Ak je však už model natrénovaný v <em>stateless</em> móde s fixnou dĺžkou vstupu, je jednoduchšie použiť ho priamo tak aj na generovanie, miesto toho, aby bol prerobený. Taktiež, redukcia výstupu na posledný znak miesto celej postupnosti sa nám javí ako snaha zjednodušiť a sprehľadniť program so zachovaním postačujúceho výkonu.</p>
 
-        <p>My sme po natrénovaní model prerábali, pričom sme sa pokúsili použiť dva rôzne prístupy generovania básní. Prvý bol snahou napodobniť pôvodný postup z článku. To znamená, použiť <em>stateful</em> model a vkladať vstup po jednom znaku. Žiaľ, sieť generovala zlý výstup (pravdepodobne sme tiež narazili na nejakú vlastnosť stateful modelu vo vzťahu k tvaru vstupu a nástroju na čítanie aktivácií o ktorej sme nevedeli) a navyše, kvôli zvolenej metodike čítania aktivácií jednotlivých neurónov bol tento postup veľmi pomalý. Druhý spôsob spočíval v použití <em>stateless</em> modelu, ktorý mal ale neobmedzenú dĺžku vstupu. V každom kole sme mu teda dávali na vstup prečítať celý doposiaľ vygenerovaný text. Model sa tak mal možnosť rozhodnúť na základe celého kontextu, nie len umelo obmedzeného na niekoľko znakov, tak ako to robili spomínané reimplementácie. Aktivácie jednotlivých neurónov sme zaznamenávali až pri poslednom prechode celého vygenerovaného textu. Je zjavné, že takýto prístup nie je elegantný a jeho časová náročnosť prudko stúpa s dĺžkou vygenerovaného textu. Pre naše potreby a nami zvolenú výstupnú dĺžku básní však bol čas generovania podobný ako pri <em>stateful</em> modeli.   </p>
+        <p>My sme po natrénovaní model prerábali, pričom sme sa pokúsili použiť dva rôzne prístupy generovania básní. Prvý bol snahou napodobniť pôvodný postup z článku. To znamená, použiť <em>stateful</em> model a vkladať vstup po jednom znaku. Žiaľ, sieť generovala zlý výstup (pravdepodobne sme tiež narazili na nejakú vlastnosť stateful modelu vo vzťahu k tvaru vstupu a nástroju na čítanie aktivácií o ktorej sme nevedeli) a navyše, kvôli zvolenej metodike čítania aktivácií jednotlivých neurónov bol tento postup veľmi pomalý. Druhý spôsob spočíval v použití <em>stateless</em> modelu, ktorý mal ale neobmedzenú dĺžku vstupu. V každom kole sme mu teda dávali na vstup prečítať celý doposiaľ vygenerovaný text. Model sa tak mal možnosť rozhodnúť na základe celého kontextu, nie len umelo obmedzeného na niekoľko znakov, tak ako to robili spomínané reimplementácie. Aktivácie jednotlivých neurónov sme zaznamenávali až pri poslednom prechode celého vygenerovaného textu. Je zjavné, že takýto prístup nie je elegantný a jeho časová náročnosť prudko stúpa s dĺžkou vygenerovaného textu. Pre naše potreby a nami zvolenú výstupnú dĺžku básní však bol čas generovania podobný ako pri použitom <em>stateful</em> modeli.   </p>
 
         <p>Počas práce na projekte sme prechádzali niekoľkými štádiami. Najskôr sme začali trénovať malé siete (dokopy do 300 neurónov rozdelených do maximálne 2 vrstiev) na vstupe rozdelenom na znaky bez odstránenia diakritiky. Z dôvodu pamäťových obmedzení sme na tréning nepoužívali všetky možné sekvencie, generovateľné zo vstupného textu, ale iba určitú časť. Napr z textu <em>abrakadabra</em> je možné získať týchto vstupných sekvencii dĺžky 5:</p>
 
@@ -230,7 +230,7 @@
 
         <p>Niektoré vygenerované básne spolu aktiváciami jednotlivých neurónov je možné preskúmať na tejto stránke. Je možné voliť neurón, ktorého aktivácie sa zobrazujú, model, ktorého básne sa zobrazujú a tiež vyberať konkrétnu báseň. V nasledujúcich častiach uvádzame podrobnosti z trénovania a taktiež niektoré príklady zaujímavých neurónov.</p>
 
-        <h4 id="psmenovmodel">Písmenový model</h4>
+        <h3 id="psmenovmodel">Písmenový model</h3>
 
         <p>Po reimplementácii generátoru vstupných dát sme vyskúšali nasledovné siete:</p>
 
@@ -246,41 +246,43 @@
 
         <p>Pozorovali sme, že zvyšovaním teploty sa model púšťa do experimentovania s dĺžkou strof či slovotvorbou. Výsledné básne teda v sebe obsahujú prvok dadaizmu. Pri nízkych teplotách model priamo recituje dlhšie úseky z pôvodného textu. Domnievame sa, že malá veľkosť vstupných dát a krátkosť trénovacej sekvencie spôsobila, že model sa nedokázal úplne naučiť pravidlá priamej reči ani správne dĺžky spevov. </p>
 
-        <h5 id="zaujmavneurny">Zaujímavé neuróny</h5>
+        <h4 id="zaujmavneurny">Zaujímavé neuróny</h4>
 
-        <p>Vzhľadom k tomu, že text básne nie je až tak štruktúrovaný, nepredpokladali sme, že bude možné identifikovať veľké množstvo špecializovaných neurónov, ako napríklad v prípade modelu generujúceho zdrojový kód v jazyku C. Očakávali sme, že nájdeme neuróny na identifikovanie nadpisov spevov, priamej reči, dĺžku veršu a dĺžku strofy. Okrem neurónov na priamu reč sa v modeli tie ostatné skutočne nachádzali. Výber niektorých:</p>
+        <p>Vzhľadom k tomu, že text básne nie je až tak štruktúrovaný, nepredpokladali sme, že bude možné identifikovať veľké množstvo špecializovaných neurónov, ako napríklad v prípade modelu generujúceho zdrojový kód v jazyku C. Očakávali sme, že nájdeme neuróny na identifikovanie nadpisov spevov, priamej reči, dĺžku veršu a dĺžku strofy. Niektoré sa v modeli skutočne nachádzali, hoci správanie veľkej väčšiny bolo nejasné. Dokonca, hoci sme nedokázali jasne identifikovať neurón na delenie strof, model ich zvládol štruktúrovať uspokojivo. Je teda možné, že napríklad v prípade priamej reči model obsahoval zhluky neurónov, ktoré sa snažili riešiť jej štruktúru, no pri jednotlivom skúmaní boli tieto neuróny nevýrazné a preto sme ich nevedeli identifikovať. Výber niektorých:</p>
 
         <ul>
-          <li>475 553 774 881 945- pozícia v  riadku</li>
+          <li>475 774 945 553 881 - pozícia v riadku</li>
 
-          <li>679 - rytmus versa</li>
+          <li>679 - rytmus verša</li>
 
-          <li>942 - spev</li>
+          <li>942 - začiatok spevu</li>
 
-          <li>524 555 582 608 755 862- slová</li>
-
-          <li>245 280 733- špec znaky, konce riadkov</li>
+          <li>582 608 755 862- slová</li>
         </ul>
 
-        <h4 id="slabikovmodel">Slabikový model</h4>
+        <h3 id="slabikovmodel">Slabikový model</h3>
 
         <p>Finálny model: 2 vrstvy, každá po 512 neurónov. Dropout 0,1</p>
 
         <p>Rovnako ako pri písmenovom modeli, pozorujeme, že model má problém s organizáciou spevov a priamou rečou. Dĺžka trénovacej sekvencie nastavená na 120 bola pravdepodobne nedostatočná na naučenie sa týchto veľkých štruktúr. Na druhej strane, zdá sa, že aspoň v prípade krátkej priamej reči si model osvojil celkom dobrú schopnosť písať ju korektne a zmysluplne.  </p>
 
-        <h5 id="zaujmavneurny-1">Zaujímavé neuróny</h5>
+        <h4 id="zaujmavneurny-1">Zaujímavé neuróny</h4>
 
-        <p>Pozorovania sa zhodujú s písmenovým modelom. Za zmienku stoja neuróny:</p>
+        <p>Pozorovania sa zhodujú s písmenovým modelom. Zdalo sa nám, že tento model obsahoval viac interpetovateľných alebo výrazných neurónov. Za zmienku stoja neuróny:</p>
         <ul>
-          <li>11 - medzery a oddelenia</li>
-
+          <li>814 885 79 255 298 462 484 666 727 823- medzery a oddelenia</li>
+          <li>167 50 104 114 135 139 412 473 489 676 683 766 792 831 862 622 - pozícia v riadku</li>
+          <li>562 610 706 926 973 734 - slová </li>
+          <li>515 630 682 953 - strofy </li>
+          <li>646 - niektoré tematické celky </li>
+          <li>833 - mŕtvy neurón </li>
         </ul>
 
         <h2 id="zvery">Závery</h2>
 
         <p>Na texte Danteho Božskej komédie sa nám podarilo natrénovať rekurentnú neurónovú sieť pracujúcu na písmenách a slabikách a to aj napriek tomu, že rozsah pôvodného diela pre takéto modely je pomerne malý. Podarilo sa nám nájsť vhodné hyperparametre a vytvoriť niekoľko nových básní, ktoré svojou kvalitou môžu konkurovať mnohým dielam súčasnej avantgardnej poézie. Ukázalo sa, že napriek tomu, že slabikový model bol výpočtovo náročnejší, medzi jeho výstupom a výstupom písmenového modelu neboli veľké rozdiely. </p>
 
-        <h4 id="zznamztrnovaniapsmenovhomodelu">Záznam z trénovania písmenového modelu:</h4>
+        <h3 id="zznamztrnovaniapsmenovhomodelu">Záznam z trénovania písmenového modelu:</h3>
 
         <p>Trénované na Intel i5-2430m</p>
 
@@ -446,7 +448,7 @@ Epoch 40/40
 Epoch 00040: val_acc improved from 0.94932 to 0.94955, saving model to checkpoints/weights512n3l60o1step-40-0.95-0.16.hdf5
         </code></pre>
 
-        <h4 id="zznamztrnovaniaslabikovhomodeluvypralasnosiesastihlaustli">Záznam z trénovania slabikového modelu (vypršal čas, no sieť sa stihla ustáliť):</h4>
+        <h3 id="zznamztrnovaniaslabikovhomodeluvypralasnosiesastihlaustli">Záznam z trénovania slabikového modelu (vypršal čas, no sieť sa stihla ustáliť):</h3>
 
         <p>Trénované na Intel i7-2600</p>
 
@@ -538,8 +540,8 @@ Epoch 19/100
         </select>
         <!--<button onclick="change(0)" style="width:100px; height:50px;">Next neuron</button>
         <button onclick="change(1)" style="width:100px; height:50px;">Previous neuron</button>-->
-        <button onclick="change(2)" style="width:100px; height:50px;">Next poem</button>
-        <button onclick="change(3)" style="width:100px; height:50px;">Previous poem</button>
+        <button onclick="change(2)" style="width:150px; height:50px;">Next poem</button>
+        <button onclick="change(3)" style="width:150px; height:50px;">Previous poem</button>
         <button onclick="toggleFixedWidth()" style="width:150px; height:50px;">Toggle fixed width</button>
         <span id="desc"> </span>
       </div>
