@@ -1,6 +1,6 @@
 def slabikar(text): #normalny string
   stav = 1
-  #lower nefunguje na unicode. Shit
+  #lower nefunguje na unicode ?!?!
   samohlasky = set(["a","e","i","o","u","á","é","í","ó","ô","ú","ä","y","ý","ì"])
   dvojhlasky = set(["ia","ie","iu"])
   nedelitelne = set(["dz","ch","dž"])
@@ -134,14 +134,9 @@ def slabikar(text): #normalny string
       stav = 1
       data.append(temp)
       continue      
-    print("bro!")
+    print("Something went wrong!")
     print(stav)
     print(i)
     print(text[i])
     break
   return data
-
-#moj = ""
-#with open("subor.txt","r") as cf:
-#  moj = cf.read()
-#print(len(slabikar(moj)))
